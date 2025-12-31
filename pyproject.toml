@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flow402-sdk"
+version = "0.1.0"
+description = "Official SDK for Flow402 – analytics for x402 payments"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Twoje Imię", email = "twoj@email.com"}
+]
+keywords = ["x402", "payments", "analytics", "micropayments", "ai"]
+
+dependencies = [
+    "httpx>=0.24",
+    "fastapi>=0.100",  # tylko jeśli użyją middleware
+]
+
+[project.optional-dependencies]
+langchain = ["langchain>=0.1"]
+
+[project.urls]
+Homepage = "https://flow402.com"
+Repository = "https://github.com/twoj-user/flow402-sdk"
+Documentation = "https://flow402.com/docs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/flow402"]
