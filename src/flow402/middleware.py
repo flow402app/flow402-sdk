@@ -17,7 +17,7 @@ class Flow402Middleware(BaseHTTPMiddleware):
     def __init__(self, app, api_key: Optional[str] = None, backend_url: Optional[str] = None):
         super().__init__(app)
         self.api_key = api_key or os.getenv("FLOW402_API_KEY")
-        self.backend_url = backend_url or "https://flow402-backend.onrender.com"  # Twój URL z Render
+        self.backend_url = backend_url or "https://flow402-backend.onrender.com"
         
         if not self.api_key:
             raise ValueError("Flow402 API key is required. Pass it or set FLOW402_API_KEY env var.")
@@ -25,36 +25,29 @@ class Flow402Middleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         response: Response = await call_next(request)
         
-        # Tylko raportuj udane requesty
         if response.status_code != 200:
             return response
 
-        # === Automatyczne wykrywanie danych x402 ===
         endpoint = str(request.url.path)
         payer_wallet = None
         amount_usd = None
         tx_hash = None
 
-        # 1. Coinbase @x402/fastapi – dane w request.state.payment
         if hasattr(request.state, "payment"):
             payment = request.state.payment
             payer_wallet = payment.get("payer") or payment.get("from")
             amount_usd = payment.get("amount_usd") or payment.get("price")
             tx_hash = payment.get("tx_hash")
 
-        # 2. Inne biblioteki – często w request.state.x402 lub headers
         elif hasattr(request.state, "x402"):
             x402_data = request.state.x402
             payer_wallet = x402_data.get("payer_wallet") or x402_data.get("from")
             amount_usd = x402_data.get("amount_usd")
             tx_hash = x402_data.get("tx_hash")
 
-        # 3. Fallback – próba odczytu z nagłówków (rzadziej używane)
         elif "x-payment-proof" in request.headers:
-            # Możemy dodać parsowanie w przyszłości
             pass
 
-        # Jeśli mamy dane – raportuj automatycznie
         if payer_wallet and amount_usd:
             await self._report(
                 endpoint=endpoint,
@@ -90,4 +83,4 @@ class Flow402Middleware(BaseHTTPMiddleware):
                     headers={"X-API-Key": self.api_key}
                 )
         except Exception:
-            pass  # Nie blokujemy API użytkownika nawet przy błędzie sieci
+            pass
