@@ -1,6 +1,7 @@
-# Flow402 SDK – Fully Automatic Analytics for x402
+# Flow402 SDK – The Easiest Analytics for x402 Payments
 
-The easiest way to track revenue from your x402-powered API.
+Flow402 automatically tracks revenue from your x402-powered API.  
+No manual logging. No extra configuration. Just **one line of code**.
 
 ## Installation
 
