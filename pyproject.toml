@@ -16,7 +16,7 @@ keywords = ["x402", "payments", "analytics", "micropayments", "ai"]
 
 dependencies = [
     "httpx>=0.24",
-    "fastapi>=0.100",  # tylko jeśli użyją middleware
+    "fastapi>=0.100",
 ]
 
 [project.optional-dependencies]
